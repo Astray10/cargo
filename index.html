@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Management System</title>
+    <link rel="stylesheet" href="style.css"> <!-- Include your CSS -->
+    <style>
+        /* Basic styles for dark theme */
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        input, button, select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+        }
+
+        input, select {
+            background-color: #3a3a3a;
+            color: white;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background-color: #218838;
+            }
+
+        .list-container {
+            margin-top: 20px;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .print-button {
+            background-color: #007bff;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background-color: white;
+                color: black;
+                font-size: 12pt;
+            }
+
+            .container {
+                background-color: transparent;
+                box-shadow: none;
+                border: none;
+            }
+
+            .print-area {
+                margin: 20px;
+            }
+
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                font-size: 12pt;
+            }
+
+                .print-table th, .print-table td {
+                    padding: 10px;
+                    border: 1px solid #000;
+                }
+
+                .print-table th {
+                    background-color: #f2f2f2;
+                    color: black;
+                    font-weight: bold;
+                }
+
+            .print-button {
+                display: none;
+            }
+
+            /* Hide buttons in print */
+            .editCargoButton,
+            .deleteCargoButton {
+                display: none !important; /* Ensure these buttons are not printed */
+            }
+
+            /* Style for print cargo details */
+            .vertical-format {
+                margin: 20px 0;
+                padding: 10px;
+                border: 1px solid #000;
+                border-radius: 5px;
+            }
+
+            .cargo-details, .billing-details {
+                margin-top: 10px;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+        }
+
+        .vertical-format {
+            margin: 10px 0;
+            border: 1px solid #000;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* Style for vertical cargo entries */
+        .cargo-entry {
+            margin: 10px 0;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #3a3a3a;
+        }
+
+            .cargo-entry h4 {
+                margin: 5px 0;
+            }
+
+        .cargo-details, .billing-details {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #2b2b2b;
+        }
+
+        .billing-details {
+            border: 1px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Check if user is logged in
+        function checkLogin() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'login.html'; // Redirect to login page
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('isLoggedIn'); // Clear the login flag
+            window.location.href = 'login.html'; // Redirect to login page
+        }
+
+        checkLogin(); // Run the check on page load
+    </script>
+
+
+
+    <!-- Inside your container div in index.html -->
+    <div class="container">
+        <h1>Cargo Management System</h1>
+        <!-- Existing code... -->
+        <button onclick="location.href='cargo_transporter_management.html'" class="print-button">Manage Transporters</button>
+        <button onclick="location.href='employee_management.html'" class="print-button">Manage Employees</button>
+        <button onclick="location.href='Total_Transaction.html'" class="print-button">Total Transaction</button>
+        <!-- Existing code... -->
+
+
+
+        <div class="form-container">
+            <h2>Add Cargo</h2>
+            <form id="cargoForm" class="vertical-form">
+                <input type="text" id="cargoName" placeholder="Cargo Name" required>
+                <input type="text" id="cargoDescription" placeholder="Cargo Description" required>
+                <input type="number" id="cargoWeight" placeholder="Weight (kg)" required>
+                <input type="text" id="cargoDimensions" placeholder="Dimensions (LxWxH)" required>
+
+                <h3>Sender Details</h3>
+                <input type="text" id="senderName" placeholder="Sender Name" required>
+                <input type="text" id="senderContact" placeholder="Sender Contact Number" required>
+                <input type="text" id="senderAddress" placeholder="Sender Address" required>
+
+                <h3>Receiver Details</h3>
+                <input type="text" id="receiverName" placeholder="Receiver Name" required>
+                <input type="text" id="receiverContact" placeholder="Receiver Contact Number" required>
+                <input type="text" id="receiverAddress" placeholder="Receiver Address" required>
+
+                <h3>Billing Details</h3>
+                <input type="text" id="invoiceNumber" placeholder="Invoice Number" required>
+                <input type="number" id="billingAmount" placeholder="Billing Amount ($)" required>
+                <select id="paymentMethod" required>
+                    <option value="" disabled selected>Select Payment Method</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Cash">Cash</option>
+                </select>
+
+                <button type="submit">Add Cargo</button>
+            </form>
+        </div>
+
+        <div class="list-container">
+            <h3>Added Cargo with Sender, Receiver, and Billing Details</h3>
+            <div class="search-container">
+                <input type="text" class="search-input" id="cargoSearch" placeholder="Search Cargo">
+            </div>
+            <div id="cargoList" class="cargo-list">
+                <!-- Cargo entries will be dynamically added here -->
+            </div>
+        </div>
+
+        <button class="print-button" id="printBillButton">Print Bill</button>
+
+        <div id="printArea" style="display: none;">
+            <h2>Bill Details</h2>
+            <div id="printCargoDetails" class="print-area">
+                <!-- Cargo details will be printed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargo Management
+        document.getElementById('cargoForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const cargoName = document.getElementById('cargoName').value;
+            const description = document.getElementById('cargoDescription').value;
+            const weight = document.getElementById('cargoWeight').value;
+            const dimensions = document.getElementById('cargoDimensions').value;
+            const senderName = document.getElementById('senderName').value;
+            const senderContact = document.getElementById('senderContact').value;
+            const senderAddress = document.getElementById('senderAddress').value;
+            const receiverName = document.getElementById('receiverName').value;
+            const receiverContact = document.getElementById('receiverContact').value;
+            const receiverAddress = document.getElementById('receiverAddress').value;
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const billingAmount = document.getElementById('billingAmount').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            const cargoList = document.getElementById('cargoList');
+            const newCargoEntry = `
+                                <div class="cargo-entry">
+                                    <div class="cargo-details">
+                                        <h4>Cargo Name: ${cargoName}</h4>
+                                        <p><strong>Description:</strong> ${description}</p>
+                                        <p><strong>Weight:</strong> ${weight} kg</p>
+                                        <p><strong>Dimensions:</strong> ${dimensions}</p>
+                                        <h5>Sender Details:</h5>
+                                        <p><strong>Name:</strong> ${senderName}</p>
+                                        <p><strong>Contact:</strong> ${senderContact}</p>
+                                        <p><strong>Address:</strong> ${senderAddress}</p>
+                                        <h5>Receiver Details:</h5>
+                                        <p><strong>Name:</strong> ${receiverName}</p>
+                                        <p><strong>Contact:</strong> ${receiverContact}</p>
+                                        <p><strong>Address:</strong> ${receiverAddress}</p>
+                                    </div>
+                                    <div class="billing-details">
+                                        <h5>Billing Details:</h5>
+                                        <p><strong>Invoice Number:</strong> ${invoiceNumber}</p>
+                                        <p><strong>Billing Amount:</strong> $${billingAmount}</p>
+                                        <p><strong>Payment Method:</strong> ${paymentMethod}</p>
+                                    </div>
+                                    <button class="editCargoButton">Edit</button>
+                                    <button class="deleteCargoButton">Delete</button>
+                                </div>
+                            `;
+            cargoList.innerHTML += newCargoEntry;
+
+            // Clear the form fields
+            document.getElementById('cargoForm').reset();
+        });
+
+        // Cargo Edit and Delete Functionality
+        document.addEventListener('click', function (event) {
+            const entry = event.target.closest('.cargo-entry');
+            if (!entry) return;
+
+            if (event.target.classList.contains('deleteCargoButton')) {
+                entry.remove();
+            } else if (event.target.classList.contains('editCargoButton')) {
+                const cargoDetails = entry.querySelector('.cargo-details');
+                const billingDetails = entry.querySelector('.billing-details');
+
+                document.getElementById('cargoName').value = cargoDetails.children[0].textContent.split(': ')[1];
+                document.getElementById('cargoDescription').value = cargoDetails.children[1].textContent.split(': ')[1];
+                document.getElementById('cargoWeight').value = cargoDetails.children[2].textContent.split(': ')[1].replace(' kg', '');
+                document.getElementById('cargoDimensions').value = cargoDetails.children[3].textContent.split(': ')[1];
+                document.getElementById('senderName').value = cargoDetails.children[5].textContent.split(': ')[1];
+                document.getElementById('senderContact').value = cargoDetails.children[6].textContent.split(': ')[1];
+                document.getElementById('senderAddress').value = cargoDetails.children[7].textContent.split(': ')[1];
+                document.getElementById('receiverName').value = cargoDetails.children[9].textContent.split(': ')[1];
+                document.getElementById('receiverContact').value = cargoDetails.children[10].textContent.split(': ')[1];
+                document.getElementById('receiverAddress').value = cargoDetails.children[11].textContent.split(': ')[1];
+                document.getElementById('invoiceNumber').value = billingDetails.children[0].textContent.split(': ')[1];
+                document.getElementById('billingAmount').value = billingDetails.children[1].textContent.split(': ')[1].replace('$', '');
+                document.getElementById('paymentMethod').value = billingDetails.children[2].textContent.split(': ')[1];
+
+                // Remove the entry after editing
+                entry.remove();
+            }
+        });
+
+        // Search Functionality
+        document.getElementById('cargoSearch').addEventListener('input', function () {
+            const searchValue = this.value.toLowerCase();
+            const entries = document.querySelectorAll('.cargo-entry');
+            entries.forEach(entry => {
+                const textContent = entry.textContent.toLowerCase();
+                entry.style.display = textContent.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        // Print Bill Functionality
+        document.getElementById('printBillButton').addEventListener('click', function () {
+            const printCargoDetails = document.getElementById('printCargoDetails');
+            printCargoDetails.innerHTML = ''; // Clear previous details
+
+            const cargoEntries = document.querySelectorAll('.cargo-entry');
+            cargoEntries.forEach(entry => {
+                const cargoDetails = entry.querySelector('.cargo-details').innerHTML.replace(/<button.*?<\/button>/g, ''); // Remove buttons from details
+                const billingDetails = entry.querySelector('.billing-details').innerHTML.replace(/<button.*?<\/button>/g, ''); // Remove buttons from billing
+                const verticalDetails = `
+                                    <div class="vertical-format">
+                                        <div class="cargo-details">${cargoDetails}</div>
+                                        <div class="billing-details">${billingDetails}</div>
+                                        <hr>
+                                    </div>`;
+                printCargoDetails.innerHTML += verticalDetails;
+            });
+
+            // Open a new window for printing
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Print Bill</title>');
+            printWindow.document.write('<style>');
+            printWindow.document.write(`
+                                body { font-family: Arial, sans-serif; }
+                                .vertical-format { margin: 20px 0; padding: 10px; border: 1px solid #000; border-radius: 5px; }
+                                h3 { margin-bottom: 5px; }
+                                p { margin: 5px 0; }
+                                hr { border: 1px solid #000; }
+                                .billing-details { border: 1px solid #28a745; }
+                                .cargo-details, .billing-details {
+                                    margin-top: 10px;
+                                    padding: 10px;
+                                    border-radius: 5px;
+                                    background-color: #f9f9f9;
+                                }
+                            `);
+            printWindow.document.write('</style></head><body>');
+            printWindow.document.write('<h2>Bill Details</h2>');
+            printWindow.document.write(printCargoDetails.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        });
+    </script>
+</body>
+</html>

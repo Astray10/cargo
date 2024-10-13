@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Transporter Management</title>
+    <link rel="stylesheet" href="style.css"> <!-- Include your CSS -->
+    <style>
+        /* Basic styles for dark theme */
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        input, button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+        }
+
+        input {
+            background-color: #3a3a3a;
+            color: white;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background-color: #218838;
+            }
+
+        .list-container {
+            margin-top: 20px;
+        }
+
+        .transporter-list {
+            margin-top: 20px;
+        }
+
+        .transporter-entry {
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .editTransporterButton,
+        .deleteTransporterButton {
+            background-color: #007bff;
+            border: none;
+            padding: 5px 10px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .editTransporterButton:hover,
+            .deleteTransporterButton:hover {
+                background-color: #0056b3;
+            }
+
+        .pass-section {
+            margin-top: 30px;
+            border-top: 2px solid #444;
+            padding-top: 20px;
+        }
+
+        .pass {
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #333;
+        }
+
+        .print-pass-button {
+            background-color: #17a2b8;
+        }
+
+            .print-pass-button:hover {
+                background-color: #138496;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cargo Transporter Management</h1>
+
+        <div class="form-container">
+            <h2>Add Transporter</h2>
+            <form id="transporterForm">
+                <input type="text" id="transporterName" placeholder="Transporter Name" required>
+                <input type="text" id="transporterID" placeholder="Transporter ID" required>
+                <input type="text" id="transporterContact" placeholder="Transporter Contact" required>
+                <input type="text" id="transporterAddress" placeholder="Transporter Address" required>
+                <button type="submit">Add Transporter</button>
+            </form>
+        </div>
+
+        <div class="list-container">
+            <h3>Added Transporters</h3>
+            <div id="transporterList" class="transporter-list">
+                <!-- Transporter entries will be dynamically added here -->
+            </div>
+        </div>
+
+        <div class="pass-section">
+            <h2>Print Cargo Pass</h2>
+            <form id="cargoPassForm">
+                <input type="text" id="passTransporterName" placeholder="Transporter Name" required>
+                <input type="text" id="passTransporterID" placeholder="Transporter ID" required>
+                <input type="number" id="totalWeight" placeholder="Total Weight (kg)" required>
+                <input type="number" id="numberOfCargos" placeholder="Number of Cargos" required>
+                <input type="date" id="deliveryDate" placeholder="Delivery Date" required>
+                <input type="time" id="deliveryTime" placeholder="Delivery Time" required>
+                <input type="text" id="deliveryFacilityAddress" placeholder="Delivery Facility Address" required>
+                <button type="submit">Generate Pass</button>
+            </form>
+            <div id="cargoPassList">
+                <!-- Cargo pass entries will be dynamically added here -->
+            </div>
+            <button id="printPassButton" class="print-pass-button">Print Cargo Pass</button>
+        </div>
+    </div>
+
+    <script>
+        // Transporter Management
+        document.getElementById('transporterForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const transporterName = document.getElementById('transporterName').value;
+            const transporterID = document.getElementById('transporterID').value;
+            const transporterContact = document.getElementById('transporterContact').value;
+            const transporterAddress = document.getElementById('transporterAddress').value;
+
+            const transporterList = document.getElementById('transporterList');
+            const newTransporterEntry = `
+                    <div class="transporter-entry">
+                        <p><strong>Name:</strong> ${transporterName}</p>
+                        <p><strong>ID:</strong> ${transporterID}</p>
+                        <p><strong>Contact:</strong> ${transporterContact}</p>
+                        <p><strong>Address:</strong> ${transporterAddress}</p>
+                        <button class="editTransporterButton">Edit</button>
+                        <button class="deleteTransporterButton">Delete</button>
+                    </div>
+                `;
+            transporterList.innerHTML += newTransporterEntry;
+
+            // Clear the form fields
+            document.getElementById('transporterForm').reset();
+        });
+
+        // Edit and Delete Transporter Functionality
+        document.addEventListener('click', function (event) {
+            const entry = event.target.closest('.transporter-entry');
+            if (!entry) return;
+
+            if (event.target.classList.contains('deleteTransporterButton')) {
+                entry.remove();
+            } else if (event.target.classList.contains('editTransporterButton')) {
+                const name = entry.querySelector('p:nth-child(1)').textContent.split(': ')[1];
+                const id = entry.querySelector('p:nth-child(2)').textContent.split(': ')[1];
+                const contact = entry.querySelector('p:nth-child(3)').textContent.split(': ')[1];
+                const address = entry.querySelector('p:nth-child(4)').textContent.split(': ')[1];
+
+                document.getElementById('transporterName').value = name;
+                document.getElementById('transporterID').value = id;
+                document.getElementById('transporterContact').value = contact;
+                document.getElementById('transporterAddress').value = address;
+
+                // Remove the entry after editing
+                entry.remove();
+            }
+        });
+
+        // Cargo Pass Management
+        document.getElementById('cargoPassForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const passTransporterName = document.getElementById('passTransporterName').value;
+            const passTransporterID = document.getElementById('passTransporterID').value;
+            const totalWeight = document.getElementById('totalWeight').value;
+            const numberOfCargos = document.getElementById('numberOfCargos').value;
+            const deliveryDate = document.getElementById('deliveryDate').value;
+            const deliveryTime = document.getElementById('deliveryTime').value;
+            const deliveryFacilityAddress = document.getElementById('deliveryFacilityAddress').value;
+
+            const cargoPassList = document.getElementById('cargoPassList');
+            const newCargoPass = `
+                    <div class="pass">
+                        <h4>Cargo Pass</h4>
+                        <p><strong>Transporter Name:</strong> ${passTransporterName}</p>
+                        <p><strong>Transporter ID:</strong> ${passTransporterID}</p>
+                        <p><strong>Total Weight:</strong> ${totalWeight} kg</p>
+                        <p><strong>Number of Cargos:</strong> ${numberOfCargos}</p>
+                        <p><strong>Delivery Date:</strong> ${deliveryDate}</p>
+                        <p><strong>Delivery Time:</strong> ${deliveryTime}</p>
+                        <p><strong>Delivery Facility Address:</strong> ${deliveryFacilityAddress}</p>
+                    </div>
+                `;
+            cargoPassList.innerHTML += newCargoPass;
+
+            // Clear the form fields
+            document.getElementById('cargoPassForm').reset();
+        });
+
+        // Print Cargo Pass
+        document.getElementById('printPassButton').addEventListener('click', function () {
+            const printContent = document.getElementById('cargoPassList').innerHTML;
+            const printWindow = window.open('', '_blank', 'height=500,width=800');
+            printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Print Cargo Pass</title>
+                        <style>
+                            body {
+                                font-family: 'Roboto', sans-serif;
+                                background-color: #ffffff;
+                                color: #000;
+                            }
+                            .pass {
+                                margin: 20px;
+                                padding: 10px;
+                                border: 1px solid #000;
+                                border-radius: 5px;
+                            }
+                            h4 {
+                                text-align: center;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>Cargo Pass</h2>
+                        ${printContent}
+                    </body>
+                    </html>
+                `);
+            printWindow.document.close();
+            printWindow.print();
+        });
+    </script>
+</body>
+</html>
